@@ -11,6 +11,7 @@ services:
       'DB_USER': 'postgres'
       'DB_HOST': db
       'DB_PORT': 5432
+      'DB_PASSWORD': 'postgres'
     depends_on:
       - db
 
