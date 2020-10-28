@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
     'django_extensions',
+
+    'apps.places',
 ]
 
 SITE_ID = 1

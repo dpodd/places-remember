@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--{% load socialaccount %}-->
+{% get_social_accounts user as accounts %}
+{{ accounts.facebook }}
+{{user.socialaccount_set.all.0.get_avatar_url}}
+<img src="{{user.socialaccount_set.all.0.get_avatar_url}}" />
+</body>
+</html>
