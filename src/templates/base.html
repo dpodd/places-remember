@@ -9,6 +9,11 @@
 {% get_social_accounts user as accounts %}
 {{ accounts.facebook }}
 {{user.socialaccount_set.all.0.get_avatar_url}}
-<img src="{{user.socialaccount_set.all.0.get_avatar_url}}" />
+{% load get_facebook_avatar_url %}
+{% get_facebook_avatar_url as ava_url %}
+<p>Test: __ {{ ava_url }} __</p>
+<img src="{{ ava_url }}" width="40" height="40"/>
+<img src="https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=796026964567999&height=50&width=50&ext=1607147438&hash=AeSOhUDy_8bXEkr3F3s" />
 </body>
+<img src="https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-1/cp0/p32x32/40410016_266216480882386_6925795551195693056_n.jpg?_nc_cat=109&ccb=2&_nc_sid=dbb9e7&_nc_ohc=kuRM_WJFfZgAX9Vh6si&_nc_ht=scontent-arn2-1.xx&tp=27&oh=f646c0eaf283b339f08c6540ada3f046&oe=5FCAE40E" />
 </html>
