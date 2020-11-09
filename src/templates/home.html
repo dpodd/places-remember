@@ -2,10 +2,25 @@
 
 {% block content %}
     {{ message }}
-    queryset: {{ memories }} <hr>
-    {% if queryset %}
-    Number of memories: {{ queryset|length }}
+    {% if memories %}
+    Number of memories: {{ memories|length }}
+        {% for memory in memories%}
+        <p>
+        {{ memory.title }}
+        {{ memory.description }}
+        </p>
+        <hr>
+        {% endfor%}
+
     {% else %}
     You have no memories
-    {% endif %}`
+    {% endif %}
+{% endblock %}
+
+{% block form %}
+<form action="" method="POST" autocomplete="off">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
 {% endblock %}
