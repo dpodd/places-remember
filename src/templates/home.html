@@ -1,1 +1,11 @@
 {% extends 'base.html' %}
+
+{% block content %}
+    {{ message }}
+    queryset: {{ memories }} <hr>
+    {% if queryset %}
+    Number of memories: {{ queryset|length }}
+    {% else %}
+    You have no memories
+    {% endif %}`
+{% endblock %}

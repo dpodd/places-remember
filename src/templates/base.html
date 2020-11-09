@@ -5,8 +5,13 @@
     <title>Title</title>
 </head>
 <body>
-<!--{% load socialaccount %}-->
-{% load get_facebook_avatar_url %}
-{% get_facebook_avatar_url as ava_url %}
-<img src="{{ ava_url }}" />
+    <!--{% load socialaccount %}-->
+    {% load get_facebook_avatar_url %}
+    {% get_facebook_avatar_url as ava_url %}
+    <img src="{{ ava_url }}" />
+
+    {% block content %}
+
+    {% endblock %}
+</body>
 </html>
