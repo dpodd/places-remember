@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from config.utils.unique_slugify import unique_slugify
+from config.utils import unique_slugify
 
 User = get_user_model()
 
