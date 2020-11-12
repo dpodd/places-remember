@@ -24,5 +24,5 @@ class Memory(models.Model):
 
     def save(self, **kwargs):
         slug_str = "%s" % (self.title,)
-        unique_slugify(self, slug_str)
+        unique_slugify(self, slug_str) # creates unique slug and places it by default to the "slug" field of the model
         super().save(**kwargs)

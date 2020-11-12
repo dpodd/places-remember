@@ -21,5 +21,6 @@ def profile_view(request, *args, **kwargs):
 
 
 def memory_view(request, *args, **kwargs):
-    context = {}
+    memory_obj = Memory.objects.get(slug=kwargs['slug'])
+    context = {'memory': memory_obj}
     return render(request, 'memory_detail.html', context)

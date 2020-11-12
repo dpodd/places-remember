@@ -1,9 +1,83 @@
 {% extends 'base.html' %}
 
 {% block title %}
-<title>Places Remember | # detail </title>
+<title>{{ memory.title }} | Places Remember</title>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+crossorigin=""/>
+<style>
+    .bg-modal {
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        position: absolute;
+        top: 0;
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-content {
+        width: 700px;
+        height: 750px;
+        background-color: whitesmoke;
+        border-radius: 4px;
+        text-align: center;
+        padding: 20px;
+        position: relative;
+    }
+    .button {
+        background-color: blue;
+        border: 2px solid white;
+        border-radius: 30px;
+        text-decoration: none;
+        padding: 10px 28px;
+        color: white;
+        margin-top: 10px;
+        display: inline-block;
+    }
+    .button:hover {
+            background-color: white;
+            color: blue;
+            border: 2px solid blue;
+    }
+    .close {
+        position: absolute;
+        top: 0;
+        right: 10px;
+        font-size: 42px;
+        transform: rotate(45deg);
+        cursor: pointer;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-{{ request.user }}
+<div id="mapid" style="width: 600px; height: 400px;"></div>
+<h2>{{ memory }}</h2>
+<p>{{ memory.description }}</p>
+{% endblock %}
+
+{% block scripts %}
+<!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+<script>
+    var mymap = L.map('mapid').setView([{{ memory.lat}}, {{ memory.lon }}], {{ memory.zoom }});
+
+
+	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox/streets-v11',
+		tileSize: 512,
+		zoomOffset: -1
+	}).addTo(mymap);
+
+</script>
 {% endblock %}
