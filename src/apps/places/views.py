@@ -13,29 +13,32 @@ def profile(request, *args, **kwargs):
     queryset = Memory.objects.filter(user_id=request.user.id)
     form = MemoryModelForm(request.POST or None)
 
-    # placeholder address, for dev
+    # # placeholder address, for dev
     location = geolocator.geocode('Krasnoyarsk')
     lat_0 = location.latitude
-    long_0 = location.longitude
-    pointA = (lat_0, long_0)
-
-    # map
-    m = folium.Map(width=800, height=500, location=pointA)
-    m = m._repr_html_()
+    lon_0 = location.longitude
+    # pointA = (lat_0, long_0)
+    #
+    # # map
+    # m = folium.Map(width=800, height=500, location=pointA)
+    # m = m._repr_html_()
 
     if form.is_valid():
         instance = form.save(commit=False)
         instance.title = form.cleaned_data.get('title')
         instance.user = request.user
         instance.description = form.cleaned_data.get('description')
-        instance.location = lat_0, long_0
+        print(instance.title, flush=True)
+        instance.lat = form.cleaned_data.get('lat')
+        instance.lon = form.cleaned_data.get('lon')
         instance.save()
 
     context = {
         "message" : "Context has passed.",
         "memories" : queryset,
         "form" : form,
-        "map" : m,
+        "lat_0" : lat_0,
+        "lon_0" : lon_0,
     }
     return render(request, 'home.html', context)
 
