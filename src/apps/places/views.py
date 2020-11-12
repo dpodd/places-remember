@@ -3,10 +3,10 @@ from django.views.generic.base import TemplateView
 from django.shortcuts import render
 from .models import Memory
 from .forms import MemoryModelForm
-from geopy.geocoders import Nominatim
-import folium
-
-geolocator = Nominatim(user_agent='places')
+# from geopy.geocoders import Nominatim
+# import folium
+#
+# geolocator = Nominatim(user_agent='places')
 
 
 def profile(request, *args, **kwargs):
@@ -14,9 +14,9 @@ def profile(request, *args, **kwargs):
     form = MemoryModelForm(request.POST or None)
 
     # # placeholder address, for dev
-    location = geolocator.geocode('Krasnoyarsk')
-    lat_0 = location.latitude
-    lon_0 = location.longitude
+    # location = geolocator.geocode('Krasnoyarsk')
+    # lat_0 = location.latitude
+    # lon_0 = location.longitude
     # pointA = (lat_0, long_0)
     #
     # # map
@@ -31,17 +31,16 @@ def profile(request, *args, **kwargs):
         print(instance.title, flush=True)
         instance.lat = form.cleaned_data.get('lat')
         instance.lon = form.cleaned_data.get('lon')
+        instance.zoom = form.cleaned_data.get('zoom')
         instance.save()
 
     context = {
         "message" : "Context has passed.",
         "memories" : queryset,
         "form" : form,
-        "lat_0" : lat_0,
-        "lon_0" : lon_0,
     }
-    return render(request, 'home.html', context)
+    return render(request, 'profile.html', context)
 
 
 class HomePageView(TemplateView):
-    template_name = "home.html"
+    template_name = "profile.html"

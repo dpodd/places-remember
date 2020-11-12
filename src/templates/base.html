@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    {% block title %}{% endblock %}
+    {% block styles %}{% endblock %}
 </head>
 <body>
-    <!--{% load socialaccount %}-->
     {% load get_facebook_avatar_url %}
     {% get_facebook_avatar_url as ava_url %}
     <img src="{{ ava_url }}" />
@@ -13,10 +13,10 @@
     {% block content %}
     {% endblock %}
 
-    {% block map %}
+    {% block form %}
     {% endblock %}
 
-    {% block form %}
+    {% block scripts %}
     {% endblock %}
 </body>
 </html>
