@@ -59,13 +59,11 @@ crossorigin=""/>
 {% block content %}
     {% if memories %}
 <h2>Ваши воспоминания:</h2>
-        {% for memory in memories%}
-        <p>
-        {{ memory.title }}
-        {{ memory.description }}
-        </p>
-        <hr>
-        {% endfor %}
+    {% for memory in memories %}
+      <ul>
+        <li><a href="{{ memory.get_absolute_url }}">{{ memory.title }}</a></li>
+      </ul>
+    {% endfor %}
 
     {% else %}
 <h2>У вас нет воспоминаний</h2>
