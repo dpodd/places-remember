@@ -4,7 +4,7 @@ from .models import Memory
 from .forms import MemoryModelForm
 
 
-def profile(request, *args, **kwargs):
+def profile_view(request, *args, **kwargs):
     queryset = Memory.objects.filter(user_id=request.user.id)
     form = MemoryModelForm(request.POST or None)
 
@@ -14,11 +14,12 @@ def profile(request, *args, **kwargs):
         instance.save()
 
     context = {
-        "memories" : queryset,
-        "form" : form,
+        "memories": queryset,
+        "form": form,
     }
     return render(request, 'profile.html', context)
 
 
-class HomePageView(TemplateView):
-    template_name = "profile.html"
+def memory_view(request, *args, **kwargs):
+    context = {}
+    return render(request, 'memory_detail.html', context)
