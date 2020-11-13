@@ -2,6 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- Removes '#_=_' sequence at the end of a url that Facebook adds after login and redirect back to our site -->
+    <script type="text/javascript">
+    if (window.location.hash === "#_=_"){
+        history.replaceState
+            ? history.replaceState(null, null, window.location.href.split("#")[0])
+            : window.location.hash = "";
+    }
+    </script>
     {% block title %}{% endblock %}
     {% block styles %}{% endblock %}
 </head>

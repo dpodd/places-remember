@@ -16,10 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from .views import index
+from allauth.account import views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index),
     path('accounts/', include('allauth.urls')),
+    # path('accounts/logout/', views.logout, name="account_logout"),
+    # path('accounts/facebook/login/, ')
     path('accounts/profile/', include('apps.places.urls'))
 ]
