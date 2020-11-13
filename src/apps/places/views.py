@@ -1,4 +1,3 @@
-from django.views.generic.base import TemplateView
 from django.shortcuts import render
 from .models import Memory
 from .forms import MemoryModelForm

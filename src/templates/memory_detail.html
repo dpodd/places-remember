@@ -79,5 +79,7 @@ crossorigin=""/>
 		zoomOffset: -1
 	}).addTo(mymap);
 
+	marker = new L.Marker([{{ memory.lat }}, {{ memory.lon }}]);
+    marker.addTo(mymap);
 </script>
 {% endblock %}
