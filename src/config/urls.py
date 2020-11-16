@@ -21,7 +21,7 @@ from allauth.account import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index),
+    path('', index, name='index'),
     path('accounts/', include('allauth.urls')),
     # path('accounts/logout/', views.logout, name="account_logout"),
     # path('accounts/facebook/login/, ')
