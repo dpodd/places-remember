@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Memory
 from .forms import MemoryModelForm
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from .permissions import only_owner_can_access
 
 
