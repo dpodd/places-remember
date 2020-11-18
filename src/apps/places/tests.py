@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from selenium import webdriver
 from selenium.webdriver import FirefoxOptions
 from selenium.webdriver.common.action_chains import ActionChains
+import geckodriver_autoinstaller
 import time
 
 
@@ -83,7 +84,7 @@ class FacebookUserTestCase(TestCase):
     def setUp(self):
         print('Starting FacebookUserTestCase'.center(60, '+'))
         config_facebook_provider()
-
+        geckodriver_autoinstaller.install()  # install geckodriver for Selenium to work with Firefox
         opts = FirefoxOptions()
         opts.add_argument("--headless")  # no display mode in container
         self.driver = webdriver.Firefox(firefox_options=opts)

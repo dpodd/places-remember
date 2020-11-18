@@ -18,9 +18,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update \
   && FIREFOX_DOWNLOAD_URL='https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64' \
   && curl -sL "$FIREFOX_DOWNLOAD_URL" | tar -xj -C /opt \
   && ln -s /opt/firefox/firefox /usr/local/bin/ \
-  && BASE_URL='https://github.com/mozilla/geckodriver/releases/download' \
-  && VERSION=$(curl -sL 'https://api.github.com/repos/mozilla/geckodriver/releases/latest' | grep tag_name | cut -d '"' -f 4) \
-  && curl -sL "${BASE_URL}/${VERSION}/geckodriver-${VERSION}-linux64.tar.gz" | tar -xz -C /usr/local/bin \
   && apt-get purge -y \
     curl \
     bzip2 \
@@ -33,3 +30,5 @@ RUN pip --no-cache-dir install -r requirements.txt
 #RUN webdrivermanager firefox --linkpath /usr/local/bin
 
 COPY ./src /app
+
+CMD ./manage.py makemigrations places

@@ -8,5 +8,7 @@ django-extensions==3.0.9
 Werkzeug==1.0.1
 pyOpenSSL==19.1.0
 django-crispy-forms==1.9.2
+# testing
 selenium
-webdriver-manager
+webdriver_manager
+geckodriver-autoinstaller==0.1.0
