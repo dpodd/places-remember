@@ -30,5 +30,3 @@ RUN pip --no-cache-dir install -r requirements.txt
 #RUN webdrivermanager firefox --linkpath /usr/local/bin
 
 COPY ./src /app
-
-CMD ./manage.py makemigrations places

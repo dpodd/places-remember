@@ -3,12 +3,15 @@ from django.urls import reverse
 from allauth.socialaccount.models import SocialApp, SocialAccount
 from django.contrib.sites.models import Site
 from django.contrib.auth import get_user_model
+from django.db import connection
 
 from selenium import webdriver
 from selenium.webdriver import FirefoxOptions
 from selenium.webdriver.common.action_chains import ActionChains
 import geckodriver_autoinstaller
 import time
+
+from .models import Memory
 
 
 
@@ -52,7 +55,7 @@ def login_through_facebook(driver):
     signin_button = driver.find_element_by_id('sign_in')
     signin_button.click()
 
-    time.sleep(1)
+    time.sleep(5)
 
     # facebook login page opens
     print("login page title: ", driver.title, flush=True)
@@ -65,7 +68,11 @@ def login_through_facebook(driver):
     login_button = driver.find_element_by_id('loginbutton')
     login_button.click()
 
-    time.sleep(1)
+    time.sleep(3)
+    if "Facebook" in driver.title:
+        confirm_button = driver.find_element_by_name('__CONFIRM__')
+        confirm_button.click()
+
     # profile page should be displayed if success
     print("profile page title: ", driver.title, flush=True)
     return driver
@@ -81,10 +88,15 @@ class BasicTestCase(TestCase):
 
 
 class FacebookUserTestCase(TestCase):
+    print('Starting FacebookUserTestCase'.center(60, '+'))
     def setUp(self):
-        print('Starting FacebookUserTestCase'.center(60, '+'))
+        print(''.center(25, '~'), flush=True)
         config_facebook_provider()
+
+        start = time.time()
         geckodriver_autoinstaller.install()  # install geckodriver for Selenium to work with Firefox
+        print('time of geckodriver installation: %s sec' % (time.time() - start), flush=True)
+
         opts = FirefoxOptions()
         opts.add_argument("--headless")  # no display mode in container
         self.driver = webdriver.Firefox(firefox_options=opts)
@@ -98,6 +110,7 @@ class FacebookUserTestCase(TestCase):
 
     def test_user_creates_new_memory_and_see_it_in_profile(self):
         """ New user creates a memory and the memory title gets displayed in the profile page """
+        print('Current web page title: ', self.driver.title, flush=True)
         # press the button to open modal window to create a new memory
         create_button = self.driver.find_element_by_id('open-modal')
         create_button.click()
@@ -108,25 +121,38 @@ class FacebookUserTestCase(TestCase):
         map = self.driver.find_element_by_id('mapid')
         ac = ActionChains(self.driver)
         ac.move_to_element(map).move_by_offset(50, 10).click().perform()
+        lon = self.driver.find_element_by_id('id_lon')
+        lat = self.driver.find_element_by_id('id_lat')
+        print('lon: ', lon.get_attribute('value'), ' ; lat: ', lat.get_attribute('value'))
 
         # fill out the form fields and click submit button
         title_field = self.driver.find_element_by_id('id_title')
-        title_field.send_keys('memory_1')
+        title_field.send_keys('memory 123')
 
-        description_field = self.driver.find_element_by_id('id_title')
+        description_field = self.driver.find_element_by_id('id_description')
         description_field.send_keys('description 1234567')
 
-        submit_button = self.driver.find_element_by_css_selector('input.button')
+        submit_button = self.driver.find_element_by_id('submit-memory')
         submit_button.click()
         time.sleep(1)
 
-        # html = self.driver.page_source
-        # print(html, flush=True)
-        # self.assertIn('Ваши воспоминания', html)
-        # self.assertIn('memory_1', html)
+
+        # obj = Memory.objects.latest('created')
+        obj = Memory.objects.get(id=1)
+        #obj = Memory.objects.all()
+
+        self.assertEqual('memory 123', obj)
+
+        html = self.driver.page_source
+        print(html, flush=True)
+        self.assertIn('memory_1', html)
 
     def tearDowm(self):
         self.driver.quit()
+        cursor = connection.cursor()
+        cursor.execute("DROP DATABASE test_postgres;")
+        cursor.commit()
+
 
 
 
