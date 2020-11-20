@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
 from allauth.socialaccount.models import SocialApp, SocialAccount
 from django.contrib.sites.models import Site
@@ -12,7 +13,6 @@ import geckodriver_autoinstaller
 import time
 
 from .models import Memory
-
 
 
 def config_facebook_provider():
@@ -41,13 +41,14 @@ def create_test_user():
     return user
 
 
-def login_through_facebook(driver):
+def login_through_facebook(driver, url):
     email = 'open_uvdpjin_user@tfbnw.net'
     password = 'HdrIoa'
 
     driver = driver
     # open index page
-    url = "https://localhost:8000/"
+    # url = "https://localhost:8000/"
+    url = url
     print("login_through_facebook__url: ", url, flush=True)
     driver.get(url)
     time.sleep(1)
@@ -75,10 +76,11 @@ def login_through_facebook(driver):
 
     # profile page should be displayed if success
     print("profile page title: ", driver.title, flush=True)
+
     return driver
 
 
-class BasicTestCase(TestCase):
+class UnitTests(TestCase):
     def setUp(self):
         config_facebook_provider()
 
@@ -87,8 +89,8 @@ class BasicTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class FacebookUserTestCase(TestCase):
-    print('Starting FacebookUserTestCase'.center(60, '+'))
+class FunctionalTests(StaticLiveServerTestCase):
+    print('Starting Functional Tests'.center(60, '+'))
     def setUp(self):
         print(''.center(25, '~'), flush=True)
         config_facebook_provider()
@@ -100,17 +102,15 @@ class FacebookUserTestCase(TestCase):
         opts = FirefoxOptions()
         opts.add_argument("--headless")  # no display mode in container
         self.driver = webdriver.Firefox(firefox_options=opts)
-        self.driver = login_through_facebook(self.driver)
+        self.driver = login_through_facebook(self.driver, self.live_server_url)
 
-    def test_profile_page_rendered_for_user(self):
-        """ Profile page with no memories list is displayed for a new user """
+    def test_user_creates_new_memory_and_see_it_in_profile(self):
+        """ New user creates a memory and the memory title gets displayed in the profile page """
+        # assert that new user has no memories
         print('Current web page title: ', self.driver.title, flush=True)
         self.assertIn('Профиль', self.driver.title)
         self.assertIn('У вас нет воспоминаний', self.driver.page_source)
 
-    def test_user_creates_new_memory_and_see_it_in_profile(self):
-        """ New user creates a memory and the memory title gets displayed in the profile page """
-        print('Current web page title: ', self.driver.title, flush=True)
         # press the button to open modal window to create a new memory
         create_button = self.driver.find_element_by_id('open-modal')
         create_button.click()
@@ -133,29 +133,16 @@ class FacebookUserTestCase(TestCase):
         description_field.send_keys('description 1234567')
 
         submit_button = self.driver.find_element_by_id('submit-memory')
+        # self.driver.save_screenshot('{}.png'.format(time.time()))
         submit_button.click()
         time.sleep(1)
 
+        objs = Memory.objects.all()
+        print("objs: ", objs, flush=True)
 
-        # obj = Memory.objects.latest('created')
-        obj = Memory.objects.get(id=1)
-        #obj = Memory.objects.all()
-
-        self.assertEqual('memory 123', obj)
 
         html = self.driver.page_source
-        print(html, flush=True)
-        self.assertIn('memory_1', html)
+        self.assertIn('memory 123', html)
 
     def tearDowm(self):
         self.driver.quit()
-        cursor = connection.cursor()
-        cursor.execute("DROP DATABASE test_postgres;")
-        cursor.commit()
-
-
-
-
-
-
-
