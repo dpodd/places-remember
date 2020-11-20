@@ -1,9 +1,10 @@
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
-from allauth.socialaccount.models import SocialApp, SocialAccount
+from allauth.socialaccount.models import SocialApp, SocialAccount, SocialToken
 from django.contrib.sites.models import Site
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 from django.db import connection
 
 from selenium import webdriver
@@ -13,6 +14,7 @@ import geckodriver_autoinstaller
 import time
 
 from .models import Memory
+from apps.places.views import profile_view
 
 
 def config_facebook_provider():
@@ -32,12 +34,20 @@ def config_facebook_provider():
 
 def create_test_user():
     User = get_user_model()
-    user = User(username='Dmitry', email='@gmail.com')
+    user = User(username='Open Graph Test User', email='open_uvdpjin_user@tfbnw.net')
     user.set_password(raw_password=None)
     user.save()
 
-    s_account = SocialAccount(user=user, provider='facebook', uid='')
+    s_account = SocialAccount(user=user, provider='facebook', uid='104777861428045')
     s_account.save()
+
+    sapp = SocialApp.objects.filter(client_id='1333592763650736').first()
+
+    s_token = SocialToken(token = 'EAAS85ULz0rABADvH5EIWRw6qowgqlgapiZBsCIlSqBtAT0wmE9QMMnNA0nZCRdvZBAvnSwv68y0qKud9WXRBr80sexooXIPLOYRY09bmdLF7rP9t7fwjiCzTn2z19gDYaau7BRvfPfXA9Xvl0aQsq8GScKJGKwf3BZCXhaoZCxfwWwiIsQjxTAgCgIedywRtbcu2P5oZCjXXik7woZAiDDR',
+                          account_id=user.id,
+                          app_id=sapp.id)
+    s_token.save()
+
     return user
 
 
@@ -83,66 +93,97 @@ def login_through_facebook(driver, url):
 class UnitTests(TestCase):
     def setUp(self):
         config_facebook_provider()
+        self.factory = RequestFactory()
 
     def test_index_page_opens(self):
         response = self.client.get(reverse('index'))
         self.assertEqual(response.status_code, 200)
 
+    def test_profile_view_is_served_for_registered_user(self):
+        user = create_test_user()
 
-class FunctionalTests(StaticLiveServerTestCase):
-    print('Starting Functional Tests'.center(60, '+'))
-    def setUp(self):
-        print(''.center(25, '~'), flush=True)
-        config_facebook_provider()
+        # create request to Profile view and attach test user
+        request = self.factory.get(reverse("profile"))
+        request.user = user
 
-        start = time.time()
-        geckodriver_autoinstaller.install()  # install geckodriver for Selenium to work with Firefox
-        print('time of geckodriver installation: %s sec' % (time.time() - start), flush=True)
+        # process responce
+        response = profile_view(request)
 
-        opts = FirefoxOptions()
-        opts.add_argument("--headless")  # no display mode in container
-        self.driver = webdriver.Firefox(firefox_options=opts)
-        self.driver = login_through_facebook(self.driver, self.live_server_url)
+        self.assertContains(response, 'У вас нет воспоминаний')
+        self.assertEqual(response.status_code, 200)
 
-    def test_user_creates_new_memory_and_see_it_in_profile(self):
-        """ New user creates a memory and the memory title gets displayed in the profile page """
-        # assert that new user has no memories
-        print('Current web page title: ', self.driver.title, flush=True)
-        self.assertIn('Профиль', self.driver.title)
-        self.assertIn('У вас нет воспоминаний', self.driver.page_source)
+    def test_anonymous_user_is_redirected_to_facebook_login_view(self):
+        user = AnonymousUser()
 
-        # press the button to open modal window to create a new memory
-        create_button = self.driver.find_element_by_id('open-modal')
-        create_button.click()
+        # create request to Profile view and attach test user
+        request = self.factory.get(reverse("profile"))
+        request.user = user
 
-        time.sleep(1)
+        # process responce
+        response = profile_view(request)
 
-        # click on the map to place a Marker
-        map = self.driver.find_element_by_id('mapid')
-        ac = ActionChains(self.driver)
-        ac.move_to_element(map).move_by_offset(50, 10).click().perform()
-        lon = self.driver.find_element_by_id('id_lon')
-        lat = self.driver.find_element_by_id('id_lat')
-        print('lon: ', lon.get_attribute('value'), ' ; lat: ', lat.get_attribute('value'))
+        time.sleep(2)
 
-        # fill out the form fields and click submit button
-        title_field = self.driver.find_element_by_id('id_title')
-        title_field.send_keys('memory 123')
-
-        description_field = self.driver.find_element_by_id('id_description')
-        description_field.send_keys('description 1234567')
-
-        submit_button = self.driver.find_element_by_id('submit-memory')
-        # self.driver.save_screenshot('{}.png'.format(time.time()))
-        submit_button.click()
-        time.sleep(1)
-
-        objs = Memory.objects.all()
-        print("objs: ", objs, flush=True)
+        self.assertIn('facebook', response.url)
 
 
-        html = self.driver.page_source
-        self.assertIn('memory 123', html)
 
-    def tearDowm(self):
-        self.driver.quit()
+
+
+# class FunctionalTests(StaticLiveServerTestCase):
+#     print('Starting Functional Tests'.center(60, '+'))
+#     def setUp(self):
+#         print(''.center(25, '~'), flush=True)
+#         config_facebook_provider()
+#
+#         start = time.time()
+#         geckodriver_autoinstaller.install()  # install geckodriver for Selenium to work with Firefox
+#         print('time of geckodriver installation: %s sec' % (time.time() - start), flush=True)
+#
+#         opts = FirefoxOptions()
+#         opts.add_argument("--headless")  # no display mode in container
+#         self.driver = webdriver.Firefox(firefox_options=opts)
+#         self.driver = login_through_facebook(self.driver, self.live_server_url)
+#
+#     def test_user_creates_new_memory_and_see_it_in_profile(self):
+#         """ New user creates a memory and the memory title gets displayed in the profile page """
+#         # assert that new user has no memories
+#         print('Current web page title: ', self.driver.title, flush=True)
+#         self.assertIn('Профиль', self.driver.title)
+#         self.assertIn('У вас нет воспоминаний', self.driver.page_source)
+#
+#         # press the button to open modal window to create a new memory
+#         create_button = self.driver.find_element_by_id('open-modal')
+#         create_button.click()
+#
+#         time.sleep(1)
+#
+#         # click on the map to place a Marker
+#         map = self.driver.find_element_by_id('mapid')
+#         ac = ActionChains(self.driver)
+#         ac.move_to_element(map).move_by_offset(50, 10).click().perform()
+#         lon = self.driver.find_element_by_id('id_lon')
+#         lat = self.driver.find_element_by_id('id_lat')
+#         print('lon: ', lon.get_attribute('value'), ' ; lat: ', lat.get_attribute('value'))
+#
+#         # fill out the form fields and click submit button
+#         title_field = self.driver.find_element_by_id('id_title')
+#         title_field.send_keys('memory 123')
+#
+#         description_field = self.driver.find_element_by_id('id_description')
+#         description_field.send_keys('description 1234567')
+#
+#         submit_button = self.driver.find_element_by_id('submit-memory')
+#         # self.driver.save_screenshot('{}.png'.format(time.time()))
+#         submit_button.click()
+#         time.sleep(1)
+#
+#         objs = Memory.objects.all()
+#         print("objs: ", objs, flush=True)
+#
+#
+#         html = self.driver.page_source
+#         self.assertIn('memory 123', html)
+#
+#     def tearDowm(self):
+#         self.driver.quit()
