@@ -27,4 +27,4 @@ jobs:
     - name: Run Tests
       env:
         COMPOSE_INTERACTIVE_NO_CLI: 1
-      run: docker exec backend python ./manage.py test
+      run: docker exec $(docker ps | grep web | awk '{print $1}') python ./manage.py test
