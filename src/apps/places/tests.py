@@ -1,4 +1,4 @@
-from django.test import TestCase, RequestFactory
+from django.test import TransactionTestCase, RequestFactory
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
 from allauth.socialaccount.models import SocialApp, SocialAccount, SocialToken
@@ -6,15 +6,17 @@ from django.contrib.sites.models import Site
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.db import connection
+from django.core.exceptions import PermissionDenied
 
 from selenium import webdriver
 from selenium.webdriver import FirefoxOptions
 from selenium.webdriver.common.action_chains import ActionChains
 import geckodriver_autoinstaller
 import time
+import pdb
 
 from .models import Memory
-from apps.places.views import profile_view
+from apps.places.views import profile_view, memory_view
 
 
 def config_facebook_provider():
@@ -43,7 +45,9 @@ def create_test_user():
 
     sapp = SocialApp.objects.filter(client_id='1333592763650736').first()
 
-    s_token = SocialToken(token = 'EAAS85ULz0rABADvH5EIWRw6qowgqlgapiZBsCIlSqBtAT0wmE9QMMnNA0nZCRdvZBAvnSwv68y0qKud9WXRBr80sexooXIPLOYRY09bmdLF7rP9t7fwjiCzTn2z19gDYaau7BRvfPfXA9Xvl0aQsq8GScKJGKwf3BZCXhaoZCxfwWwiIsQjxTAgCgIedywRtbcu2P5oZCjXXik7woZAiDDR',
+    s_token = SocialToken(token =  ('EAAS85ULz0rABADvH5EIWRw6qowgqlgapiZBsCIlSqBtAT0wmE9QMMnNA0nZCRdvZBAvnSwv68y0qKud9W'
+                                    'XRBr80sexooXIPLOYRY09bmdLF7rP9t7fwjiCzTn2z19gDYaau7BRvfPfXA9Xvl0aQsq8GScKJGKwf3BZC'
+                                    'XhaoZCxfwWwiIsQjxTAgCgIedywRtbcu2P5oZCjXXik7woZAiDDR'),
                           account_id=user.id,
                           app_id=sapp.id)
     s_token.save()
@@ -89,8 +93,12 @@ def login_through_facebook(driver, url):
 
     return driver
 
+def logger(execute, sql, params, many, context):
+    print(sql, params)
+    return execute(sql, params, many, context)
 
-class UnitTests(TestCase):
+
+class UnitTests(TransactionTestCase):
     def setUp(self):
         config_facebook_provider()
         self.factory = RequestFactory()
@@ -126,8 +134,59 @@ class UnitTests(TestCase):
 
         self.assertIn('facebook', response.url)
 
+    def test_memories_are_visible_on_the_profile_page(self):
+        user = create_test_user()
+
+        # create request to Profile view and attach test user
+        request = self.factory.get(reverse("profile"))
+        request.user = user
+
+        memory = Memory(lat=-0.081367, lon=51.502225, zoom=13, title='New Memory', description='something',
+                    user_id=user.id)
+        memory.save()
+
+        # process response
+        response = profile_view(request)
+
+        self.assertContains(response, 'New Memory')
+
+    def test_owner_has_access_to_memory_detail(self):
+        pdb.set_trace()
+        user = create_test_user()
+
+        memory = Memory(lat=-2.081367, lon=51.502225, zoom=13, title='New Memory', description='something blabla',
+                        user_id=user.id)
+        memory.save()
+
+        # create request to Detail view and attach test user
+        request = self.factory.get(reverse('memory_detail')) #, kwargs={'slug': 'new-memory'}))
+        request.user = user
+
+        # process response
+        response = profile_view(request, slug='new-memory')
+
+        self.assertContains(response, 'something blabla')
 
 
+    def test_only_owner_has_access_to_memory_detail(self):
+        user = create_test_user()
+
+        memory = Memory(lat=-2.081367, lon=51.502225, zoom=13, title='New Memory', description='something',
+                        user_id=user.id)
+        memory.save()
+
+        # create another user
+        User = get_user_model()
+        user2 = User(username='Test user', email='open_user@tfbnw.net')
+        user2.set_password(raw_password=None)
+        user2.save()
+
+        # create request to Detail view and attach test user
+        request = self.factory.get(reverse('memory_detail', kwargs={'slug': 'new-memory'}))
+        request.user = user2
+
+        # process response
+        self.assertRaises(PermissionDenied, memory_view, request, slug='new-memory')
 
 
 # class FunctionalTests(StaticLiveServerTestCase):
