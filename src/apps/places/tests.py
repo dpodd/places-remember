@@ -93,11 +93,6 @@ def login_through_facebook(driver, url):
 
     return driver
 
-def logger(execute, sql, params, many, context):
-    print(sql, params)
-    return execute(sql, params, many, context)
-
-
 class UnitTests(TransactionTestCase):
     def setUp(self):
         config_facebook_provider()
