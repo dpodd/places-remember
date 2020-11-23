@@ -45,10 +45,10 @@ def create_test_user():
 
     sapp = SocialApp.objects.filter(client_id='1333592763650736').first()
 
-    s_token = SocialToken(token =  ('EAAS85ULz0rABADvH5EIWRw6qowgqlgapiZBsCIlSqBtAT0wmE9QMMnNA0nZCRdvZBAvnSwv68y0qKud9W'
-                                    'XRBr80sexooXIPLOYRY09bmdLF7rP9t7fwjiCzTn2z19gDYaau7BRvfPfXA9Xvl0aQsq8GScKJGKwf3BZC'
-                                    'XhaoZCxfwWwiIsQjxTAgCgIedywRtbcu2P5oZCjXXik7woZAiDDR'),
-                          account_id=user.id,
+    s_token = SocialToken(token='EAAS85ULz0rABADvH5EIWRw6qowgqlgapiZBsCIlSqBtAT0wmE9QMMnNA0nZCRdvZBAvnSwv68y0qKud9W' +
+                                'XRBr80sexooXIPLOYRY09bmdLF7rP9t7fwjiCzTn2z19gDYaau7BRvfPfXA9Xvl0aQsq8GScKJGKwf3BZC' +
+                                'XhaoZCxfwWwiIsQjxTAgCgIedywRtbcu2P5oZCjXXik7woZAiDDR',
+                          account_id=s_account.id,
                           app_id=sapp.id)
     s_token.save()
 
@@ -127,7 +127,7 @@ class UnitTests(TransactionTestCase):
         request = self.factory.get(reverse("profile"))
         request.user = user
 
-        # process responce
+        # process response
         response = profile_view(request)
 
         time.sleep(2)
@@ -151,7 +151,6 @@ class UnitTests(TransactionTestCase):
         self.assertContains(response, 'New Memory')
 
     def test_owner_has_access_to_memory_detail(self):
-        pdb.set_trace()
         user = create_test_user()
 
         memory = Memory(lat=-2.081367, lon=51.502225, zoom=13, title='New Memory', description='something blabla',
@@ -159,11 +158,12 @@ class UnitTests(TransactionTestCase):
         memory.save()
 
         # create request to Detail view and attach test user
-        request = self.factory.get(reverse('memory_detail')) #, kwargs={'slug': 'new-memory'}))
+        kwargs = {'slug': 'new-memory'}
+        request = self.factory.get(reverse('memory_detail', kwargs=kwargs))
         request.user = user
 
         # process response
-        response = profile_view(request, slug='new-memory')
+        response = memory_view(request, **kwargs)
 
         self.assertContains(response, 'something blabla')
 
@@ -189,60 +189,60 @@ class UnitTests(TransactionTestCase):
         self.assertRaises(PermissionDenied, memory_view, request, slug='new-memory')
 
 
-# class FunctionalTests(StaticLiveServerTestCase):
-#     print('Starting Functional Tests'.center(60, '+'))
-#     def setUp(self):
-#         print(''.center(25, '~'), flush=True)
-#         config_facebook_provider()
-#
-#         start = time.time()
-#         geckodriver_autoinstaller.install()  # install geckodriver for Selenium to work with Firefox
-#         print('time of geckodriver installation: %s sec' % (time.time() - start), flush=True)
-#
-#         opts = FirefoxOptions()
-#         opts.add_argument("--headless")  # no display mode in container
-#         self.driver = webdriver.Firefox(firefox_options=opts)
-#         self.driver = login_through_facebook(self.driver, self.live_server_url)
-#
-#     def test_user_creates_new_memory_and_see_it_in_profile(self):
-#         """ New user creates a memory and the memory title gets displayed in the profile page """
-#         # assert that new user has no memories
-#         print('Current web page title: ', self.driver.title, flush=True)
-#         self.assertIn('Профиль', self.driver.title)
-#         self.assertIn('У вас нет воспоминаний', self.driver.page_source)
-#
-#         # press the button to open modal window to create a new memory
-#         create_button = self.driver.find_element_by_id('open-modal')
-#         create_button.click()
-#
-#         time.sleep(1)
-#
-#         # click on the map to place a Marker
-#         map = self.driver.find_element_by_id('mapid')
-#         ac = ActionChains(self.driver)
-#         ac.move_to_element(map).move_by_offset(50, 10).click().perform()
-#         lon = self.driver.find_element_by_id('id_lon')
-#         lat = self.driver.find_element_by_id('id_lat')
-#         print('lon: ', lon.get_attribute('value'), ' ; lat: ', lat.get_attribute('value'))
-#
-#         # fill out the form fields and click submit button
-#         title_field = self.driver.find_element_by_id('id_title')
-#         title_field.send_keys('memory 123')
-#
-#         description_field = self.driver.find_element_by_id('id_description')
-#         description_field.send_keys('description 1234567')
-#
-#         submit_button = self.driver.find_element_by_id('submit-memory')
-#         # self.driver.save_screenshot('{}.png'.format(time.time()))
-#         submit_button.click()
-#         time.sleep(1)
-#
-#         objs = Memory.objects.all()
-#         print("objs: ", objs, flush=True)
-#
-#
-#         html = self.driver.page_source
-#         self.assertIn('memory 123', html)
-#
-#     def tearDowm(self):
-#         self.driver.quit()
+class FunctionalTests(StaticLiveServerTestCase):
+    print('Starting Functional Tests'.center(60, '+'))
+    def setUp(self):
+        print(''.center(25, '~'), flush=True)
+        config_facebook_provider()
+
+        start = time.time()
+        geckodriver_autoinstaller.install()  # install geckodriver for Selenium to work with Firefox
+        print('time of geckodriver installation: %s sec' % (time.time() - start), flush=True)
+
+        opts = FirefoxOptions()
+        opts.add_argument("--headless")  # no display mode in container
+        self.driver = webdriver.Firefox(firefox_options=opts)
+        self.driver = login_through_facebook(self.driver, self.live_server_url)
+
+    def test_user_creates_new_memory_and_see_it_in_profile(self):
+        """ New user creates a memory and the memory title gets displayed in the profile page """
+        # assert that new user has no memories
+        print('Current web page title: ', self.driver.title, flush=True)
+        self.assertIn('Профиль', self.driver.title)
+        self.assertIn('У вас нет воспоминаний', self.driver.page_source)
+
+        # press the button to open modal window to create a new memory
+        create_button = self.driver.find_element_by_id('open-modal')
+        create_button.click()
+
+        time.sleep(1)
+
+        # click on the map to place a Marker
+        map = self.driver.find_element_by_id('mapid')
+        ac = ActionChains(self.driver)
+        ac.move_to_element(map).move_by_offset(50, 10).click().perform()
+        lon = self.driver.find_element_by_id('id_lon')
+        lat = self.driver.find_element_by_id('id_lat')
+        print('lon: ', lon.get_attribute('value'), ' ; lat: ', lat.get_attribute('value'))
+
+        # fill out the form fields and click submit button
+        title_field = self.driver.find_element_by_id('id_title')
+        title_field.send_keys('memory 123')
+
+        description_field = self.driver.find_element_by_id('id_description')
+        description_field.send_keys('description 1234567')
+
+        submit_button = self.driver.find_element_by_id('submit-memory')
+        # self.driver.save_screenshot('{}.png'.format(time.time()))
+        submit_button.click()
+        time.sleep(1)
+
+        objs = Memory.objects.all()
+        print("objs: ", objs, flush=True)
+
+
+        html = self.driver.page_source
+        self.assertIn('memory 123', html)
+
+    def tearDowm(self):
+        self.driver.quit()
