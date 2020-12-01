@@ -143,3 +143,11 @@ USE_TZ = True
 LOGIN_URL = "/accounts/facebook/login/"
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = BASE_DIR / "static"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "templates/css",
+]
+
+

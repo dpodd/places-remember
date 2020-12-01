@@ -1,5 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+<!--    <div id="fb-root"></div>-->
+<!--    <script async defer crossorigin="anonymous"-->
+<!--        src="https://connect.facebook.net/ru_RU/sdk.js#xfbml=1&version=v9.0&appId=1333592763650736&autoLogAppEvents=1"-->
+<!--        nonce="0fTJBzkj"></script>-->
+    {% load socialaccount %}
+    {% providers_media_js %}
+    <title>Places Remember</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title-logo">
+                <h1>Places Remember</h1>
+            </div>
+            <!--<div class="auth-block"> </div>-->
+        </div>
+
+        <div class="content-wrapper">
+            <div class="main">
+                <p><strong>Places Remember</strong> - это сайт, где вы можете сохранить ваши воспоминания с привязкой к
+                    координатам. Войдите, что начать пользоваться.</p>
+
+                <button onclick="location.href='{% provider_login_url "facebook" method="oauth2" %}'" type="button" class="loginBtn loginBtn--facebook">
+                    Login with Facebook
+                </button>
+
+            </div>
+            <div class="sidebar"> </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<!--<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Places Remember</title>
@@ -13,3 +55,4 @@
  </a>
 </body>
 </html>
+-->
