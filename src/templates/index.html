@@ -6,10 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <link rel="stylesheet" href="{% static 'style.css' %}">
-<!--    <div id="fb-root"></div>-->
-<!--    <script async defer crossorigin="anonymous"-->
-<!--        src="https://connect.facebook.net/ru_RU/sdk.js#xfbml=1&version=v9.0&appId=1333592763650736&autoLogAppEvents=1"-->
-<!--        nonce="0fTJBzkj"></script>-->
     {% load socialaccount %}
     {% providers_media_js %}
     <title>Places Remember</title>
@@ -40,19 +36,3 @@
 </body>
 
 </html>
-<!--<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Places Remember</title>
-</head>
-<body>
-С помощью этого приложения вы сможете сохранять свои воспоминания в привязке к месту.
-{% load socialaccount %}
-{% providers_media_js %}
-<a href="{% provider_login_url "facebook" method="oauth2" %}" id="sign_in" class="btn btn-block btn-social btn-facebook" style="background-color:#3b5998;text-align:center">
-  <span class="fa fa-facebook">Sign in with Facebook</span>
- </a>
-</body>
-</html>
--->

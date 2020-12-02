@@ -4,19 +4,34 @@
     <meta charset="UTF-8">
     <!-- Removes '#_=_' sequence at the end of a url that Facebook adds after login and redirect back to our site -->
     <script type="text/javascript">
-    if (window.location.hash === "#_=_"){
-        history.replaceState
-            ? history.replaceState(null, null, window.location.href.split("#")[0])
-            : window.location.hash = "";
-    }
+        if (window.location.hash === "#_=_"){
+            history.replaceState
+                ? history.replaceState(null, null, window.location.href.split("#")[0])
+                : window.location.hash = "";
+        }
     </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    {% load socialaccount %}
     {% block title %}{% endblock %}
     {% block styles %}{% endblock %}
 </head>
 <body>
-    {% load get_facebook_avatar_url %}
-    {% get_facebook_avatar_url as ava_url %}
-    <img src="{{ ava_url }}" />
+    <div class="container">
+    <div class="header">
+        <div class="title-logo">
+            <h1>Places Remember</h1>
+        </div>
+        <div class="auth-block">
+            <div class="userpic">
+                {% load get_facebook_avatar_url %}
+                {% get_facebook_avatar_url as ava_url %}
+                <img src="{{ ava_url }}" />
+            </div>
+            <div>{{ user }}</div>
+        </div>
+    </div>
 
     {% block content %}
     {% endblock %}

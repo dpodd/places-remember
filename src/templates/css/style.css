@@ -61,6 +61,10 @@ h1 {
     background: url("https://i1.wp.com/www.wwhf.org/wp-content/uploads/2014/04/map-background.jpg?ssl=1") no-repeat center center / cover;
 }
 
+.userpic {
+    border-radius: 20px;
+}
+
 /* login button */
 .loginBtn {
   box-sizing: border-box;
