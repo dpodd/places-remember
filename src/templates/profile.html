@@ -2,7 +2,7 @@
 
 {% block title %}
 <title>Places Remember | Профиль</title>
-{% endblock %}
+{% endblock title %}
 
 {% block styles %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
@@ -22,7 +22,7 @@ crossorigin=""/>
     .modal-content {
         width: 700px;
         height: 750px;
-        background-color: whitesmoke;
+        background-color: white;
         border-radius: 4px;
         text-align: center;
         padding: 20px;
@@ -52,44 +52,45 @@ crossorigin=""/>
         cursor: pointer;
     }
 </style>
-{% endblock %}
+{% endblock styles %}
 
 {% load crispy_forms_tags %}
 
 {% block content %}
     {% if memories %}
-<h2>Ваши воспоминания:</h2>
-    {% for memory in memories %}
-      <ul>
-        <li><a href="{{ memory.get_absolute_url }}">{{ memory.title }}</a></li>
-      </ul>
-    {% endfor %}
+        <h2>Ваши воспоминания:</h2>
+        {% for memory in memories %}
+          <ul>
+            <li><a href="{{ memory.get_absolute_url }}">{{ memory.title }}</a></li>
+          </ul>
+        {% endfor %}
 
     {% else %}
-<h2>У вас нет воспоминаний</h2>
+        <h2>У вас нет воспоминаний</h2>
     {% endif %}
+    <button class="button" id="open-modal">Новое воспоминание</button>
 {% endblock content %}
 
 {% block form %}
-<div class="bg-modal">
-    <div class="modal-content">
-        <div class="close" id="close-modal">+</div>
-        <div id="mapid" style="width: 600px; height: 400px;"></div>
-        <div>
-            <form action="" method="POST">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <input id="submit-memory" type="submit" value="submit" class="button">
-            </form>
+    <div class="bg-modal">
+        <div class="modal-content">
+            <div class="close" id="close-modal">+</div>
+            <div id="mapid" style="width: 600px; height: 400px;"></div>
+            <div>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input id="submit-memory" type="submit" value="submit" class="button">
+                </form>
+            </div>
         </div>
     </div>
-</div>
-<button class="button" id="open-modal">Новое воспоминание</button>
+
 {% endblock %}
 
 {% block scripts %}
 <!-- Make sure you put this AFTER Leaflet's CSS -->
- <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
    crossorigin=""></script>
 <script>
@@ -132,7 +133,7 @@ crossorigin=""/>
         mymap.invalidateSize(); // for map to load correctly on the modal form
     });
 </script>
-{% endblock %}
+{% endblock scripts %}
 
 
 

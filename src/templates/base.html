@@ -19,25 +19,39 @@
 </head>
 <body>
     <div class="container">
-    <div class="header">
-        <div class="title-logo">
-            <h1>Places Remember</h1>
-        </div>
-        <div class="auth-block">
-            <div class="userpic">
-                {% load get_facebook_avatar_url %}
-                {% get_facebook_avatar_url as ava_url %}
-                <img src="{{ ava_url }}" />
+        <div class="header">
+            <div class="title-logo">
+                <h1>Places Remember</h1>
             </div>
-            <div>{{ user }}</div>
+            <div class="auth-block">
+                <div >
+                    {% load get_facebook_avatar_url %}
+                    {% get_facebook_avatar_url as ava_url %}
+                    <img src="{{ ava_url }}" class="userpic" />
+                </div>
+                <div class="profile-menu">
+                    <div class="username">{{ user }}</div>
+                    <div class="arrow-container">
+                        <div class="arrow down"></div>
+                    </div>
+                    <ul class="menu">
+                        <li><a href="#">Log Out</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
+
+        <div class="content-wrapper">
+            <div class="main profile">
+                {% block content %}
+                {% endblock content %}
+            </div>
+        </div>
+
     </div>
 
-    {% block content %}
-    {% endblock %}
-
     {% block form %}
-    {% endblock %}
+    {% endblock form %}
 
     {% block scripts %}
     {% endblock %}

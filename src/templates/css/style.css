@@ -12,12 +12,14 @@ h1 {
     width: 800px;
     min-height: 600px; /*border: 1px solid black;*/
     margin: 0 auto;
-    margin-top: 100px;
+    margin-top: 60px;
     background-color: #d3d3d3;
     padding: 10px;
 }
 
 .header { /*border: 1px dashed red;*/
+    padding-top: 10px;
+    padding-bottom: 10px;
     margin-bottom: 20px;
     display: flex;
     background-color: #a9a9a9;
@@ -27,15 +29,6 @@ h1 {
     width: 85%;
     padding: 0 30px;
     margin-right: 10px;
-}
-
-.auth-block {
-    width: 15%;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
 }
 
 .content-wrapper {
@@ -111,4 +104,81 @@ h1 {
 .loginBtn--facebook:focus {
   background-color: #5B7BD5;
   background-image: linear-gradient(#5B7BD5, #4864B1);
+}
+
+/* auth dropdown menu */
+.auth-block {
+    width: 15%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.userpic {
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.profile-menu {
+    display: flex;
+    border: 1px dashed white;
+}
+
+.username {
+    padding-top: 4px;
+}
+
+.arrow-container {
+    margin-left: 5px;
+    float: right;
+    border: 1px dashed red;
+}
+
+.arrow {
+    border: solid black;
+    border-width: 0 2px 2px 0;
+    padding: 3px;
+    display: inline-block;
+}
+
+.down{
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+
+.menu > ul, .menu > li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu > a { text-decoration: none;}
+
+.profile-menu {
+    border: 1px solid #000;
+    border-radius: 3px;
+    background-color: gray;
+    color: #fff;
+}
+
+.menu {
+    display: none;
+    position: absolute;
+    left: 0;
+    clear: both;
+    margin: 20px 0 0 0;
+}
+
+.profile-menu:hover .menu {
+    display: block;
+}
+
+.menu li a {
+    color: #555;
+}
+
+.menu li:hover > a {
+    color: #eee;
 }
