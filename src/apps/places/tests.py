@@ -68,6 +68,7 @@ def login_through_facebook(driver, url):
     time.sleep(1)
     print("index page title: ", driver.title, flush=True)
     signin_button = driver.find_element_by_id('sign_in')
+
     signin_button.click()
 
     time.sleep(5)
