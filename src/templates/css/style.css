@@ -38,6 +38,7 @@ h1 {
 }
 .main {
     width: 60%;
+    height: border-box:;
     border: 10px solid white;
     padding: 20px;
     font-size: 18px;
@@ -46,6 +47,7 @@ h1 {
 .main.profile {
     border: 1px solid white;
     width: 100%;
+    min-height: 420px;
     background-color: #f0f0f0;
 }
 
