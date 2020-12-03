@@ -10,19 +10,20 @@ h1 {
 
 .container {
     width: 800px;
-    min-height: 600px; /*border: 1px solid black;*/
+    min-height: 600px;
     margin: 0 auto;
     margin-top: 60px;
     background-color: #d3d3d3;
     padding: 10px;
 }
 
-.header { /*border: 1px dashed red;*/
+.header {
     padding-top: 10px;
     padding-bottom: 10px;
     margin-bottom: 20px;
     display: flex;
     background-color: #a9a9a9;
+    height: 90px;
 }
 
 .title-logo {
@@ -62,7 +63,6 @@ h1 {
 .loginBtn {
   box-sizing: border-box;
   position: relative;
-  /* width: 13em;  - apply for fixed size */
   margin: 0.2em;
   padding: 0 15px 0 46px;
   border: none;
@@ -121,64 +121,41 @@ h1 {
     border: 2px solid white;
 }
 
-.profile-menu {
-    display: flex;
-    border: 1px dashed white;
-}
-
-.username {
-    padding-top: 4px;
-}
-
-.arrow-container {
-    margin-left: 5px;
-    float: right;
-    border: 1px dashed red;
-}
-
-.arrow {
-    border: solid black;
-    border-width: 0 2px 2px 0;
-    padding: 3px;
+.profile-wrapper {
+    width: 100px;
+    position: relative;
     display: inline-block;
 }
 
-.down{
-    transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
+.username:after {
+    content: '';
+    position: relative;
+    top: 10px;
+    left: 3px;
+    border-color: #000000 transparent transparent;
+    border-width: 6px;
+    border-style: solid;
 }
-
-.menu > ul, .menu > li {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.menu > a { text-decoration: none;}
 
 .profile-menu {
-    border: 1px solid #000;
-    border-radius: 3px;
-    background-color: gray;
-    color: #fff;
-}
-
-.menu {
     display: none;
     position: absolute;
-    left: 0;
-    clear: both;
-    margin: 20px 0 0 0;
-}
+    background-color: #d3d3d3;
+    min-width: 100px;
+    size: 12px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
 
-.profile-menu:hover .menu {
+.profile-menu a {
+    color: black;
+    padding: 8px 16px;
+    text-decoration: none;
     display: block;
-}
+  }
 
-.menu li a {
-    color: #555;
-}
+.profile-menu a:hover {background-color: #d0d0d0}
 
-.menu li:hover > a {
-    color: #eee;
+.profile-wrapper:hover .profile-menu {
+    display: block;
 }

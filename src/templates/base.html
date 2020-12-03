@@ -24,19 +24,20 @@
                 <h1>Places Remember</h1>
             </div>
             <div class="auth-block">
-                <div >
+                <div class="profile-wrapper">
                     {% load get_facebook_avatar_url %}
                     {% get_facebook_avatar_url as ava_url %}
                     <img src="{{ ava_url }}" class="userpic" />
-                </div>
-                <div class="profile-menu">
-                    <div class="username">{{ user }}</div>
-                    <div class="arrow-container">
-                        <div class="arrow down"></div>
+                    <div class="username" style="size:14px;">{{ user }}</div>
+                    <div class="profile-menu">
+                        <a href="javascript:logOut()">Log Out</a>
                     </div>
-                    <ul class="menu">
-                        <li><a href="#">Log Out</a></li>
-                    </ul>
+                    <!-- hidden form for POST request to logout without confirmation-->
+                    <form style='display: none;' method="post" action="{% url 'account_logout' %}">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="{% url 'index' %}"/>
+                      <button id="signOutBtn" type="submit">Logout</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -55,5 +56,11 @@
 
     {% block scripts %}
     {% endblock %}
+    <script>
+        function logOut () {
+            let logout_btn = document.getElementById('signOutBtn');
+            logout_btn.click();
+        }
+    </script>
 </body>
 </html>
